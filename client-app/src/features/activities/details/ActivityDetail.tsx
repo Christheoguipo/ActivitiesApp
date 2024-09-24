@@ -1,20 +1,13 @@
-import {
-  Button,
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardMeta,
-  Image,
-} from "semantic-ui-react";
+import { Button, Card, CardContent, CardDescription, CardHeader, CardMeta, Image } from "semantic-ui-react";
 import { Activity } from "../../../models/activity";
 
 interface Props {
   activity: Activity;
   cancelSelectedActivity: () => void;
+  openForm: (id: string) => void;
 }
 
-const ActivityDetail = ({ activity, cancelSelectedActivity }: Props) => {
+const ActivityDetail = ({ activity, cancelSelectedActivity, openForm }: Props) => {
   return (
     <Card fluid>
       <Image src={`/assets/categoryImages/${activity.category}.jpg`} />
@@ -27,7 +20,7 @@ const ActivityDetail = ({ activity, cancelSelectedActivity }: Props) => {
       </CardContent>
       <CardContent extra>
         <Button.Group widths={2}>
-          <Button basic color="blue" content="Edit"></Button>
+          <Button basic onClick={() => openForm(activity.id)} color="blue" content="Edit"></Button>
           <Button
             onClick={cancelSelectedActivity}
             basic
