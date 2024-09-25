@@ -13,7 +13,7 @@ function App() {
   const [editMode, setEditMode] = useState(false);
 
   const handleSelectActivity = (id: string) => {
-    setSelectedActivity(activities.find((activity) => activity.id === id));
+    setSelectedActivity(activities.find(activity => activity.id === id));
   };
 
   const handleCancelSelectedActivity = () => {
@@ -30,6 +30,7 @@ function App() {
 
     setEditMode(true);
   }
+
 
   const handleFormClose = () => {
     setEditMode(false)

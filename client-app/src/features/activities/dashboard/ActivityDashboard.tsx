@@ -19,6 +19,7 @@ const ActivityDashboard = ({
   selectActivity, cancelSelectedActivity,
   openForm, closeForm, editMode
 }: Props) => {
+
   return (
     <Grid>
       <Grid.Column width="10">
@@ -33,7 +34,7 @@ const ActivityDashboard = ({
           ></ActivityDetail>
         )}
         {editMode &&
-          <ActivityForm closeForm={closeForm} activity={selectActivity} />}
+          <ActivityForm closeForm={closeForm} activity={selectedActivity} />}
       </Grid.Column>
     </Grid>
   );
