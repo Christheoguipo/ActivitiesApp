@@ -6,12 +6,13 @@ import NavBar from "./NavBar";
 import ActivityDashboard from "../../features/activities/dashboard/ActivityDashboard";
 import { v4 as uuid } from 'uuid';
 import agent from "../api/agent";
+import LoadingComponent from "./LoadingComponent";
 
 function App() {
   const [activities, setActivities] = useState<Activity[]>([]);
   const [selectedActivity, setSelectedActivity] = useState<Activity | undefined>(undefined);
-
   const [editMode, setEditMode] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const handleSelectActivity = (id: string) => {
     setSelectedActivity(activities.find(activity => activity.id === id));
@@ -63,24 +64,32 @@ function App() {
       });
 
       setActivities(activites);
+      setLoading(false);
     });
+
   }, []);
+
+  // if (loading === true) return (<LoadingComponent content="Loading content..." />);
 
   return (
     <>
       <NavBar openForm={handleFormOpen} />
       <Container style={{ marginTop: "7em" }}>
-        <ActivityDashboard
-          selectedActivity={selectedActivity}
-          selectActivity={handleSelectActivity}
-          cancelSelectedActivity={handleCancelSelectedActivity}
-          activities={activities}
-          openForm={handleFormOpen}
-          closeForm={handleFormClose}
-          editMode={editMode}
-          createOrEdit={handleCreateOrEditActivity}
-          deleteActivity={handleDeleteActivity}
-        />
+        {loading ? (
+          <LoadingComponent content="Loading content" />
+        ) : (
+          <ActivityDashboard
+            selectedActivity={selectedActivity}
+            selectActivity={handleSelectActivity}
+            cancelSelectedActivity={handleCancelSelectedActivity}
+            activities={activities}
+            openForm={handleFormOpen}
+            closeForm={handleFormClose}
+            editMode={editMode}
+            createOrEdit={handleCreateOrEditActivity}
+            deleteActivity={handleDeleteActivity}
+          />
+        )}
       </Container>
     </>
   );
