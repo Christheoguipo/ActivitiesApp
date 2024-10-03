@@ -13,6 +13,7 @@ function App() {
   const [selectedActivity, setSelectedActivity] = useState<Activity | undefined>(undefined);
   const [editMode, setEditMode] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
 
   const handleSelectActivity = (id: string) => {
     setSelectedActivity(activities.find(activity => activity.id === id));
@@ -36,22 +37,49 @@ function App() {
   const handleFormClose = () => {
     setEditMode(false)
   }
-
   const handleCreateOrEditActivity = (activity: Activity) => {
-    if (activity.id) {
-      // Edit
-      setActivities([...activities.filter(a => a.id !== activity.id), activity]);
-    } else {
-      // Create
-      setActivities([...activities, { ...activity, id: uuid() }]);
+    setSubmitting(true);
+    try {
+      if (activity.id) {
+        // Edit
+        agent.Activities.update(activity).then(() => {
+
+          setActivities([...activities.filter(a => a.id !== activity.id), activity]);
+
+          setEditMode(false);
+          setSubmitting(false);
+          setSelectedActivity(activity);
+        });
+
+      } else {
+        // Create
+        activity.id = uuid();
+        agent.Activities.create(activity).then(() => {
+          setActivities([...activities, activity]);
+
+          setEditMode(false);
+          setSubmitting(false);
+          setSelectedActivity(activity);
+        });
+
+      }
+    } catch (error) {
+      console.error(error);
+      setEditMode(false);
+      setSubmitting(false);
     }
 
-    setEditMode(false);
-    setSelectedActivity(activity);
   }
 
   const handleDeleteActivity = (id: string) => {
-    setActivities([...activities.filter(a => a.id !== id)]);
+    setSubmitting(true);
+    setEditMode(false);
+    setSelectedActivity(undefined);
+
+    agent.Activities.delete(id).then(() => {
+      setActivities([...activities.filter(a => a.id !== id)]);
+      setSubmitting(false);
+    });
   }
 
   useEffect(() => {
@@ -68,8 +96,6 @@ function App() {
     });
 
   }, []);
-
-  // if (loading === true) return (<LoadingComponent content="Loading content..." />);
 
   return (
     <>
@@ -88,6 +114,7 @@ function App() {
             editMode={editMode}
             createOrEdit={handleCreateOrEditActivity}
             deleteActivity={handleDeleteActivity}
+            submitting={submitting}
           />
         )}
       </Container>
