@@ -1,13 +1,10 @@
-import { makeObservable, observable } from "mobx"
+import { makeAutoObservable } from "mobx"
 
 export default class ActivityStore {
 
-  title = 'Sample Title'
-
   constructor() {
-    makeObservable(this, {
-      title: observable
-    })
+
+    makeAutoObservable(this)
   }
 
 }

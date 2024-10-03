@@ -7,8 +7,10 @@ import ActivityDashboard from "../../features/activities/dashboard/ActivityDashb
 import { v4 as uuid } from 'uuid';
 import agent from "../api/agent";
 import LoadingComponent from "./LoadingComponent";
+import { observer } from "mobx-react-lite";
 
 function App() {
+
   const [activities, setActivities] = useState<Activity[]>([]);
   const [selectedActivity, setSelectedActivity] = useState<Activity | undefined>(undefined);
   const [editMode, setEditMode] = useState(false);
@@ -104,7 +106,7 @@ function App() {
         {loading ? (
           <LoadingComponent content="Loading content" />
         ) : (
-          <ActivityDashboard
+          < ActivityDashboard
             selectedActivity={selectedActivity}
             selectActivity={handleSelectActivity}
             cancelSelectedActivity={handleCancelSelectedActivity}
@@ -122,4 +124,4 @@ function App() {
   );
 }
 
-export default App;
+export default observer(App);
