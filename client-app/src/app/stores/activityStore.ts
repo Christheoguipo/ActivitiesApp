@@ -1,15 +1,14 @@
 import { makeAutoObservable, runInAction } from "mobx"
 import { Activity } from "../models/activity"
 import agent from "../api/agent"
-import { v4 as uuid } from 'uuid';
 
 export default class ActivityStore {
 
   activityList = new Map<string, Activity>();
   selectedActivity: Activity | undefined;
   editMode: boolean = false;
-  loadingList: boolean = true;
-  loadingButton: boolean = false;
+  isLoadingList: boolean = false;
+  isLoadingButton: boolean = false;
 
   constructor() {
     makeAutoObservable(this);
@@ -21,64 +20,70 @@ export default class ActivityStore {
   }
 
   loadActivities = async () => {
-    try {
+    this.setIsLoadingList(true);
 
+    try {
       const activities = await agent.Activities.list();
 
       activities.forEach((activity) => {
-        activity.date = new Date(activity.date).toISOString().split("T")[0];
         this.setActivityList(activity);
       });
 
     } catch (error) {
       console.log(error);
     } finally {
-      this.setLoadingInitial(false);
+      this.setIsLoadingList(false);
     }
-
   }
 
-  setActivityList = (activity: Activity) => {
+  loadActivity = async (id: string) => {
+    let activity = this.getActivity(id);
+
+    if (activity) this.selectedActivity = activity;
+    else {
+      this.setIsLoadingList(true);
+      try {
+        activity = await agent.Activities.details(id);
+        if (activity) {
+          runInAction(() => {
+            this.setActivityList(activity!);
+            this.selectedActivity = activity;
+          });
+        } else {
+          console.log(`Activity of id ${id} couldn't be found.`);
+        }
+
+      } catch (error) {
+        console.log(error);
+      } finally {
+        this.setIsLoadingList(false);
+      }
+    }
+
+    return activity;
+  }
+
+  private setActivityList = (activity: Activity) => {
+    activity.date = activity.date.split("T")[0];
     this.activityList.set(activity.id, activity);
   }
 
-  setLoadingInitial = (value: boolean) => {
-    this.loadingList = value;
+  private getActivity = (id: string) => {
+    return this.activityList.get(id);
   }
 
-  selectActivity = (id: string) => {
-    if (this.editMode)
-      this.closeForm();
+  private setIsLoadingList = (value: boolean) => {
+    this.isLoadingList = value;
+  }
 
-    this.selectedActivity = this.activityList.get(id);
-  };
-
-  cancelSelectedActivity = () => {
+  private cancelSelectedActivity = () => {
     this.selectedActivity = undefined;
-  }
-
-  openForm = (id?: string) => {
-    if (id)
-      this.selectActivity(id)
-    else
-      this.cancelSelectedActivity();
-
-    this.editMode = true;
-  }
-
-  closeForm = () => {
-    this.editMode = false;
-  }
-
-  setEditMode = (value: boolean) => {
-    this.editMode = value;
   }
 
   createActivity = async (activity: Activity) => {
 
-    this.loadingButton = true;
+    this.isLoadingButton = true;
     try {
-      activity.id = uuid();
       await agent.Activities.create(activity);
       runInAction(() => {
         this.setActivityList(activity);
@@ -88,14 +93,14 @@ export default class ActivityStore {
       console.log(error);
     } finally {
       runInAction(() => {
-        this.loadingButton = false;
+        this.isLoadingButton = false;
         this.editMode = false;
       });
     }
   }
 
   updateActivity = async (activity: Activity) => {
-    this.loadingButton = true;
+    this.isLoadingButton = true;
     try {
 
       await agent.Activities.update(activity);
@@ -109,7 +114,7 @@ export default class ActivityStore {
     } finally {
       runInAction(() => {
         this.editMode = false;
-        this.loadingButton = false;
+        this.isLoadingButton = false;
       });
     }
   }
@@ -117,7 +122,7 @@ export default class ActivityStore {
   deleteActivity = async (id: string) => {
 
     runInAction(() => {
-      this.loadingButton = true;
+      this.isLoadingButton = true;
       this.editMode = false;
       if (this.selectedActivity?.id === id) this.cancelSelectedActivity();
     });
@@ -133,7 +138,7 @@ export default class ActivityStore {
       console.log(error);
     } finally {
       runInAction(() => {
-        this.loadingButton = false;
+        this.isLoadingButton = false;
       });
     }
   }
