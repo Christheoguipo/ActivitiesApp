@@ -14,9 +14,24 @@ export default class ActivityStore {
     makeAutoObservable(this);
   }
 
-  get ActivityListSortedByDate() {
+  get activityListSortedByDate() {
     return Array.from(this.activityList.values())
       .sort((a, b) => Date.parse(a.date) - Date.parse(b.date));
+  }
+
+  get groupedActivityByDate() {
+    return Object.entries(
+      this.activityListSortedByDate.reduce((activities, activity) => {
+        const date = activity.date;
+
+        if (activities[date]) {
+          activities[date] = [...activities[date], activity]
+        } else {
+          activities[date] = [activity];
+        }
+        return activities;
+
+      }, {} as { [key: string]: Activity[] }));
   }
 
   loadActivities = async () => {
