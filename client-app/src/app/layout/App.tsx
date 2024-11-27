@@ -12,7 +12,7 @@ function App() {
   return (
 
     <>
-      <ToastContainer position="bottom-right" theme="colored" />
+      <ToastContainer position="bottom-right" hideProgressBar theme="colored" />
       {location.pathname === '/' ? <HomePage /> : (
         <>
           <NavBar />
