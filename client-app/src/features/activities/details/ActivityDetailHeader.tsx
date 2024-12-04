@@ -1,5 +1,6 @@
 import { Button, Header, Image, Item, Segment } from "semantic-ui-react"
 import { Activity } from "../../../app/models/activity"
+import { Link } from "react-router-dom"
 
 
 interface Props {
@@ -40,7 +41,7 @@ const ActivityDetailHeader = ({ activity }: Props) => {
       <Segment attached='bottom' clearing>
         <Button color="teal" content='Join Activity' />
         <Button content='Cancel attendance' />
-        <Button color="orange" content='Manage Event' floated="right" />
+        <Button as={Link} to={`/manage/${activity.id}`} color="orange" content='Manage Event' floated="right" />
       </Segment>
     </Segment.Group>
   )
