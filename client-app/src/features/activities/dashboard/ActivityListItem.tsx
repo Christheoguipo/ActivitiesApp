@@ -1,7 +1,5 @@
-import { Button, Icon, Item, Label, Segment } from "semantic-ui-react"
+import { Button, Icon, Item, Segment } from "semantic-ui-react"
 import { Activity } from "../../../app/models/activity"
-import { useStore } from "../../../app/stores/store"
-import { SyntheticEvent, useState } from "react"
 import { Link } from "react-router-dom"
 
 interface Props {
@@ -9,17 +7,6 @@ interface Props {
 }
 
 const ActivityListItem = ({ activity }: Props) => {
-
-
-  const { activityStore } = useStore();
-  const { isLoadingButton, deleteActivity } = activityStore;
-  const [target, setTarget] = useState('');
-
-  const handleDelete = (e: SyntheticEvent<HTMLButtonElement>, id: string) => {
-    setTarget(e.currentTarget.name);
-    deleteActivity(id);
-  };
-
 
   return (
     <Segment.Group>
@@ -55,38 +42,6 @@ const ActivityListItem = ({ activity }: Props) => {
     </Segment.Group >
   );
 
-  return (
-    <Item key={activity.id}>
-      <Item.Content>
-        <Item.Header as="a">{activity.title}</Item.Header>
-        <Item.Meta>{activity.date}</Item.Meta>
-        <Item.Description>
-          <div>{activity.description}</div>
-          <div>
-            {activity.city}, {activity.venue}
-          </div>
-        </Item.Description>
-        <Item.Extra>
-          <Button
-            as={Link}
-            to={`/activities/${activity.id}`}
-            floated="right"
-            content="View"
-            color="blue"
-          />
-          <Button
-            name={activity.id}
-            loading={isLoadingButton && target === activity.id}
-            onClick={(e) => handleDelete(e, activity.id)}
-            floated="right"
-            content="Delete"
-            color="red"
-          />
-          <Label basic content={activity.category} />
-        </Item.Extra>
-      </Item.Content>
-    </Item>
-  )
 }
 
 export default ActivityListItem
