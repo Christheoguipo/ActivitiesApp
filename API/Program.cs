@@ -19,6 +19,7 @@ namespace API
             builder.Services.AddSwaggerGen();
 
             builder.Services.AddApplicationServices(builder.Configuration);
+            builder.Services.AddIdentityServices();
 
             var app = builder.Build();
 
