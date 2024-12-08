@@ -1,7 +1,7 @@
-import { Button, Header, Image, Item, Segment } from "semantic-ui-react"
-import { Activity } from "../../../app/models/activity"
-import { Link } from "react-router-dom"
-
+import { Button, Header, Image, Item, Segment } from "semantic-ui-react";
+import { Activity } from "../../../app/models/activity";
+import { Link } from "react-router-dom";
+import { format } from 'date-fns';
 
 interface Props {
   activity: Activity
@@ -30,7 +30,7 @@ const ActivityDetailHeader = ({ activity }: Props) => {
             <Item>
               <Item.Content >
                 <Header size="huge" content={activity.title} style={{ color: 'white' }} />
-                <p>{activity.date}</p>
+                <p>{format(activity.date!, 'dd MMM yyyy')}</p>
                 <p>Hosted by <strong>theo</strong></p>
               </Item.Content>
             </Item>

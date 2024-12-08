@@ -1,5 +1,6 @@
-import { Grid, Icon, Segment } from "semantic-ui-react"
-import { Activity } from "../../../app/models/activity"
+import { Grid, Icon, Segment } from "semantic-ui-react";
+import { Activity } from "../../../app/models/activity";
+import { format } from 'date-fns';
 
 interface Props {
   activity: Activity
@@ -24,7 +25,7 @@ const ActivityDetailInfo = ({ activity }: Props) => {
             <Icon name="calendar" size="large" color="teal" />
           </Grid.Column>
           <Grid.Column width={15}>
-            <p>{activity.date}</p>
+            <p>{format(activity.date!, 'dd MMM yyy hh:mm aa')}</p>
           </Grid.Column>
         </Grid>
       </Segment>

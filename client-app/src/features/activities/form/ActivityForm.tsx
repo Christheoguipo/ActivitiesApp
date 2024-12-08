@@ -25,7 +25,7 @@ const ActivityForm = () => {
   const [activity, setActivity] = useState<Activity>({
     id: '',
     title: '',
-    date: '',
+    date: null,
     description: '',
     category: '',
     city: '',
