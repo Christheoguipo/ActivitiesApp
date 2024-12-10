@@ -1,5 +1,7 @@
 using API.Extensions;
 using API.Middleware;
+using Domain;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 
@@ -46,14 +48,15 @@ namespace API
             {
                 var context = services.GetRequiredService<DataContext>();
                 context.Database.Migrate();
-                Seed.SeedData(context);
+
+                var userManager = services.GetRequiredService<UserManager<AppUser>>();
+                Seed.SeedData(context, userManager);
             }
             catch (Exception ex)
             {
                 var logger = services.GetRequiredService<ILogger<Program>>();
                 logger.LogError(ex, "An Error occured during the migration.");
             }
-
 
             app.Run();
         }
