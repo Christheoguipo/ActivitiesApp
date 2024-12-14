@@ -35,7 +35,7 @@ namespace API
             }
 
             app.UseCors("CorsPolicy");
-
+            app.UseAuthentication();
             app.UseAuthorization();
 
 
