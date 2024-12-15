@@ -64,20 +64,18 @@ namespace API.Controllers
 
             var result = await _userManager.CreateAsync(user, registerDto.Password);
 
-            if (result.Succeeded == false)
+            if (!result.Succeeded)
             {
                 return BadRequest(result.Errors);
             }
-            else
+            
+            return new UserDto
             {
-                return new UserDto
-                {
-                    DisplayName = user.DisplayName,
-                    Image = null,
-                    Username = user.UserName,
-                    Token = _tokenService.CreateToken(user)
-                };
-            }
+                DisplayName = user.DisplayName,
+                Image = null,
+                Username = user.UserName,
+                Token = _tokenService.CreateToken(user)
+            };
         }
     }
 }
