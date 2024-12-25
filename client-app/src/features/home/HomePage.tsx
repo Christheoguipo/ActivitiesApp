@@ -10,7 +10,7 @@ function HomePage() {
           Reactivities
         </Header>
         <Header as={"h2"} inverted content="Welcome to Reactivities" />
-        <Button as={Link} to={"/activities"} inverted size="huge">Take me there!</Button>
+        <Button as={Link} to={"/login"} inverted size="huge">Login</Button>
       </Container>
     </Segment>
   )
