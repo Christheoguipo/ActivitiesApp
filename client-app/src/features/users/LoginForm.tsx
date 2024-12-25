@@ -1,20 +1,25 @@
 import { Form, Formik } from "formik"
 import MyTextInput from "../../app/common/form/MyTextInput"
 import { Button } from "semantic-ui-react"
+import { useStore } from "../../app/stores/store"
+import { observable } from "mobx"
 
 const LoginForm = () => {
+
+  const { userStore } = useStore();
+
   return (
     <Formik
       initialValues={{ 'email': '', 'password': '' }}
-      onSubmit={values => console.log(values)} >
-      {({ handleSubmit }) => (
+      onSubmit={values => userStore.login(values)} >
+      {({ handleSubmit, isSubmitting }) => (
         <Form className="ui form" onSubmit={handleSubmit} autoComplete="off" >
           <MyTextInput name="email" placeholder="Email" />
           <MyTextInput name="password" placeholder="Password" type="password" />
-          <Button positive content="Login" type="submit" fluid />
+          <Button loading={isSubmitting} positive content="Login" type="submit" fluid />
         </Form>)}
     </Formik >
   )
 }
 
-export default LoginForm
+export default observable(LoginForm)
