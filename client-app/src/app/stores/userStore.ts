@@ -1,4 +1,4 @@
-import { makeAutoObservable } from "mobx";
+import { makeAutoObservable, runInAction } from "mobx";
 import { User, UserFormValues } from "../models/user";
 import agent from "../api/agent";
 import { store } from "./store";
@@ -18,8 +18,9 @@ export default class UserStore {
   login = async (creds: UserFormValues) => {
     const user = await agent.Account.login(creds);
     store.commonStore.setToken(user.token);
-    // runInAction
-    this.user = user;
+    runInAction(() => {
+      this.user = user;
+    });
     router.navigate('/activities');
   }
 
