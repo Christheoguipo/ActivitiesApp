@@ -9,7 +9,7 @@ namespace API.DTOs
         public string Email { get; set; }
 
         [Required]
-        [RegularExpression("(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{4,8}$", ErrorMessage = "Password is not complex enough.")]
+        [RegularExpression("^(?=(.*[a-z]))(?=(.*[A-Z]))(?=(.*\\d))(?=(.*[\\W_])).{6,}$", ErrorMessage = "Password is not complex enough.")]
         public string Password { get; set; }
 
         [Required]
