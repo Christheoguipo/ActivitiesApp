@@ -18,10 +18,9 @@ export default class UserStore {
   login = async (creds: UserFormValues) => {
     const user = await agent.Account.login(creds);
     store.commonStore.setToken(user.token);
-    runInAction(() => {
-      this.user = user;
-    });
+    runInAction(() => this.user = user);
     router.navigate('/activities');
+    store.modalStore.closeModal();
   }
 
   logout = () => {
@@ -33,9 +32,7 @@ export default class UserStore {
   getUser = async () => {
     try {
       const user = await agent.Account.currentUser();
-      runInAction(() => {
-        this.user = user
-      });
+      runInAction(() => this.user = user);
     } catch (error) {
       console.log(error);
     }
