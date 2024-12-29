@@ -1,0 +1,37 @@
+import { ErrorMessage, Form, Formik } from "formik"
+import MyTextInput from "../../app/common/form/MyTextInput"
+import { Button, Header, Label } from "semantic-ui-react"
+import { useStore } from "../../app/stores/store"
+import { observer } from "mobx-react-lite"
+import * as Yup from 'yup';
+
+const RegisterForm = () => {
+
+  const { userStore } = useStore();
+
+  return (
+    <Formik
+      initialValues={{ email: '', password: '', displayName: '', username: '', error: null }}
+      onSubmit={(values, { setErrors }) => userStore.register(values).catch(() => setErrors({ error: 'Invalid Email or Password.' }))}
+      validationSchema={Yup.object({
+        email: Yup.string().required(),
+        password: Yup.string().required(),
+        displayName: Yup.string().required(),
+        username: Yup.string().required(),
+      })}
+    >
+      {({ handleSubmit, isSubmitting, errors, isValid, dirty }) => (
+        <Form className="ui form" onSubmit={handleSubmit} autoComplete="off" >
+          <Header as='h2' content="Sign up to Reactivities" color="teal" textAlign="center" />
+          <MyTextInput name="displayName" placeholder="Display Name" />
+          <MyTextInput name="username" placeholder="Username" />
+          <MyTextInput name="email" placeholder="Email" />
+          <MyTextInput name="password" placeholder="Password" type="password" />
+          <ErrorMessage name="error" render={() => <Label style={{ marginBottom: 10 }} basic color="red" content={errors.error} />} />
+          <Button disabled={!dirty || !isValid || isSubmitting} loading={isSubmitting} positive content="Register" type="submit" fluid />
+        </Form>)}
+    </Formik >
+  )
+}
+
+export default observer(RegisterForm)
