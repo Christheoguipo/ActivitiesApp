@@ -1,12 +1,15 @@
 import { Link } from "react-router-dom"
 import { Image, Item, Label, List, Segment } from "semantic-ui-react"
-import { Profile } from "../../../app/models/profile"
+import { Activity } from "../../../app/models/activity";
+import { observer } from "mobx-react-lite";
 
 interface Props {
-  attendees: Profile[];
+  activity: Activity;
 }
 
-const ActivityDetailSideBar = ({ attendees }: Props) => {
+const ActivityDetailSideBar = ({ activity: { attendees, host } }: Props) => {
+  if (!attendees) return null;
+
   return (
     <>
       <Segment attached='top' secondary inverted color="teal" textAlign="center" style={{ border: 'none' }}>
@@ -16,7 +19,9 @@ const ActivityDetailSideBar = ({ attendees }: Props) => {
         <List relaxed divided>
           {attendees.map((attendee) => (
             <Item style={{ position: 'relative' }} key={attendee.username}>
-              <Label ribbon='right' color="orange" style={{ position: 'absolute' }}>Host</Label>
+              {attendee.username === host?.username &&
+                (<Label ribbon='right' color="orange" style={{ position: 'absolute' }}>Host</Label>)
+              }
               <Image src={attendee.image || '/assets/user.png'} size="tiny" />
               <Item.Content verticalAlign="middle">
                 <Item.Header as='h3'>
@@ -33,4 +38,4 @@ const ActivityDetailSideBar = ({ attendees }: Props) => {
   )
 }
 
-export default ActivityDetailSideBar
+export default observer(ActivityDetailSideBar)

@@ -31,7 +31,7 @@ const ActivityDetailHeader = ({ activity }: Props) => {
               <Item.Content >
                 <Header size="huge" content={activity.title} style={{ color: 'white' }} />
                 <p>{format(activity.date!, 'dd MMM yyyy')}</p>
-                <p>Hosted by <strong>theo</strong></p>
+                <p>Hosted by <strong><Link to={`/profiles/${activity.host?.username}`}>{activity.host?.displayName}</Link></strong></p>
               </Item.Content>
             </Item>
           </Item.Group>
@@ -39,9 +39,13 @@ const ActivityDetailHeader = ({ activity }: Props) => {
 
       </Segment>
       <Segment attached='bottom' clearing>
-        <Button color="teal" content='Join Activity' />
-        <Button content='Cancel attendance' />
-        <Button as={Link} to={`/manage/${activity.id}`} color="orange" content='Manage Event' floated="right" />
+        {activity.isHost ? (
+          <Button as={Link} to={`/manage/${activity.id}`} color="orange" content='Manage Event' floated="right" />
+        ) : activity.isGoing ? (
+          <Button content='Cancel attendance' />
+        ) : (
+          <Button color="teal" content='Join Activity' />
+        )}
       </Segment>
     </Segment.Group>
   )
