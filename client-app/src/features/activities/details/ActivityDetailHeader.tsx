@@ -2,6 +2,8 @@ import { Button, Header, Image, Item, Segment } from "semantic-ui-react";
 import { Activity } from "../../../app/models/activity";
 import { Link } from "react-router-dom";
 import { format } from 'date-fns';
+import { useStore } from "../../../app/stores/store";
+import { observer } from "mobx-react-lite";
 
 interface Props {
   activity: Activity
@@ -21,6 +23,9 @@ const textOnImageStyle = {
 }
 
 const ActivityDetailHeader = ({ activity }: Props) => {
+
+  const { activityStore: { isLoadingButton, updateAttendance } } = useStore();
+
   return (
     <Segment.Group>
       <Segment basic attached='top' style={{ padding: '0px' }}>
@@ -42,13 +47,13 @@ const ActivityDetailHeader = ({ activity }: Props) => {
         {activity.isHost ? (
           <Button as={Link} to={`/manage/${activity.id}`} color="orange" content='Manage Event' floated="right" />
         ) : activity.isGoing ? (
-          <Button content='Cancel attendance' />
+          <Button loading={isLoadingButton} onClick={updateAttendance} content='Cancel attendance' />
         ) : (
-          <Button color="teal" content='Join Activity' />
+          <Button loading={isLoadingButton} onClick={updateAttendance} color="teal" content='Join Activity' />
         )}
       </Segment>
     </Segment.Group>
   )
 }
 
-export default ActivityDetailHeader
+export default observer(ActivityDetailHeader)
