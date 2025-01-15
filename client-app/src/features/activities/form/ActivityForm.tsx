@@ -4,7 +4,7 @@ import { useStore } from "../../../app/stores/store";
 import { observer } from "mobx-react-lite";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import LoadingComponent from "../../../app/layout/LoadingComponent";
-import { Activity } from "../../../app/models/activity";
+import { ActivityFormValues } from "../../../app/models/activity";
 import { v4 as uuid } from 'uuid';
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
@@ -17,19 +17,11 @@ import MyDateInput from "../../../app/common/form/MyDateInput";
 const ActivityForm = () => {
 
   const { activityStore } = useStore();
-  const { isLoadingButton, createActivity, updateActivity, loadActivity, isLoadingList } = activityStore;
+  const { createActivity, updateActivity, loadActivity, isLoadingList } = activityStore;
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const [activity, setActivity] = useState<Activity>({
-    id: '',
-    title: '',
-    date: null,
-    description: '',
-    category: '',
-    city: '',
-    venue: ''
-  });
+  const [activity, setActivity] = useState<ActivityFormValues>(new ActivityFormValues());
 
   const validationSchema = Yup.object({
     title: Yup.string().required("Title is required."),
@@ -41,10 +33,10 @@ const ActivityForm = () => {
   });
 
   useEffect(() => {
-    if (id) loadActivity(id).then(activity => setActivity(activity!));
+    if (id) loadActivity(id).then(activity => setActivity(new ActivityFormValues(activity)));
   }, [id, loadActivity]);
 
-  const handleFormSubmit = (activity: Activity) => {
+  const handleFormSubmit = (activity: ActivityFormValues) => {
 
     if (activity.id) {
       updateActivity(activity).then(() => navigate(`/activities/${activity.id}`));
@@ -82,7 +74,7 @@ const ActivityForm = () => {
             <MyTextInput name="venue" placeholder="Venue" />
             <Button
               disabled={isSubmitting || !isValid || !dirty}
-              loading={isLoadingButton}
+              loading={isSubmitting}
               type="submit" floated="right" positive content="Submit" />
             <Button as={Link} to="/activities" type="button" floated="right" content="Cancel"></Button>
           </Form>

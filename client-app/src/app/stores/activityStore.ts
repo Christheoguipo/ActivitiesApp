@@ -1,5 +1,5 @@
 import { makeAutoObservable, runInAction } from "mobx"
-import { Activity } from "../models/activity"
+import { Activity, ActivityFormValues } from "../models/activity"
 import agent from "../api/agent"
 import { format } from "date-fns";
 import { store } from "./store";
@@ -84,7 +84,7 @@ export default class ActivityStore {
   private setActivityList = (activity: Activity) => {
     const user = store.userStore.user;
     if (user) {
-      activity.isGoing = activity.attendees?.some(aa => aa.username === user.username);
+      activity.isGoing = activity.attendees!.some(aa => aa.username === user.username);
       activity.isHost = user.username == activity.hostUsername;
       activity.host = activity.attendees?.find(aa => aa.username === activity.hostUsername);
     }
@@ -105,42 +105,36 @@ export default class ActivityStore {
     this.selectedActivity = undefined;
   }
 
-  createActivity = async (activity: Activity) => {
-
-    this.isLoadingButton = true;
+  createActivity = async (activity: ActivityFormValues) => {
+    const user = store.userStore.user;
+    const attendee = new Profile(user!);
     try {
       await agent.Activities.create(activity);
+      const newActivity = new Activity(activity);
+      newActivity.hostUsername = user!.username;
+      newActivity.attendees = [attendee];
+      this.setActivityList(newActivity);
+
       runInAction(() => {
-        this.setActivityList(activity);
-        this.selectedActivity = activity;
+        this.selectedActivity = newActivity;
       });
     } catch (error) {
       console.log(error);
-    } finally {
-      runInAction(() => {
-        this.isLoadingButton = false;
-        this.editMode = false;
-      });
     }
   }
 
-  updateActivity = async (activity: Activity) => {
-    this.isLoadingButton = true;
+  updateActivity = async (activity: ActivityFormValues) => {
     try {
-
       await agent.Activities.update(activity);
       runInAction(() => {
-        this.setActivityList(activity);
-        this.selectedActivity = activity;
+        if (activity.id) {
+          const updatedActivity = { ...this.getActivity(activity.id), ...activity };
+          this.activityList.set(activity.id, updatedActivity as Activity);
+          this.selectedActivity = updatedActivity as Activity;
+        }
       });
-
     } catch (error) {
       console.log(error);
-    } finally {
-      runInAction(() => {
-        this.editMode = false;
-        this.isLoadingButton = false;
-      });
     }
   }
 
