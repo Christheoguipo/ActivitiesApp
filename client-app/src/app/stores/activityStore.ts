@@ -138,6 +138,19 @@ export default class ActivityStore {
     }
   }
 
+  cancelActivityToggle = async () => {
+    this.isLoadingButton = true;
+    try {
+      await agent.Activities.attend(this.selectedActivity!.id);
+      this.selectedActivity!.isCancelled = !this.selectedActivity!.isCancelled;
+      this.activityList.set(this.selectedActivity!.id, this.selectedActivity!);
+    } catch (error) {
+      console.log(error)
+    } finally {
+      runInAction(() => this.isLoadingButton = false);
+    }
+  }
+
   deleteActivity = async (id: string) => {
 
     runInAction(() => {
@@ -186,6 +199,6 @@ export default class ActivityStore {
         this.isLoadingButton = false;
       });
     }
-
   }
+
 }
