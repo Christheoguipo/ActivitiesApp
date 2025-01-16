@@ -1,4 +1,4 @@
-import { Button, Header, Image, Item, Segment } from "semantic-ui-react";
+import { Button, Header, Image, Item, Label, Segment } from "semantic-ui-react";
 import { Activity } from "../../../app/models/activity";
 import { Link } from "react-router-dom";
 import { format } from 'date-fns';
@@ -24,11 +24,15 @@ const textOnImageStyle = {
 
 const ActivityDetailHeader = ({ activity }: Props) => {
 
-  const { activityStore: { isLoadingButton, updateAttendance } } = useStore();
+  const { activityStore: { isLoadingButton, updateAttendance, cancelActivityToggle } } = useStore();
 
   return (
     <Segment.Group>
-      <Segment basic attached='top' style={{ padding: '0px' }}>
+      <Segment basic attached='top' style={{ padding: '0' }}>
+        {activity.isCancelled &&
+          <Label
+            style={{ position: 'absolute', zIndex: 1000, left: -14, top: 20 }}
+            ribbon color='red' content='Cancelled' />}
         <Image src={`/assets/categoryImages/${activity.category}.jpg`} fluid style={dimmedImageStyle} />
         <Segment basic style={textOnImageStyle}>
           <Item.Group>
@@ -45,11 +49,21 @@ const ActivityDetailHeader = ({ activity }: Props) => {
       </Segment>
       <Segment attached='bottom' clearing>
         {activity.isHost ? (
-          <Button as={Link} to={`/manage/${activity.id}`} color="orange" content='Manage Event' floated="right" />
+          <>
+            <Button disabled={activity.isCancelled} as={Link} to={`/manage/${activity.id}`} color="orange" content='Manage Event' floated="right" />
+            <Button
+              basic
+              floated="left"
+              loading={isLoadingButton}
+              onClick={cancelActivityToggle}
+              color={activity.isCancelled ? 'green' : 'red'}
+              content={activity.isCancelled ? 'Re-activate activity' : 'Cancel activity'}
+            />
+          </>
         ) : activity.isGoing ? (
           <Button loading={isLoadingButton} onClick={updateAttendance} content='Cancel attendance' />
         ) : (
-          <Button loading={isLoadingButton} onClick={updateAttendance} color="teal" content='Join Activity' />
+          <Button disabled={activity.isCancelled} loading={isLoadingButton} onClick={updateAttendance} color="teal" content='Join Activity' />
         )}
       </Segment>
     </Segment.Group>
