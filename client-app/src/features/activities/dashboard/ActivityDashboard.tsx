@@ -12,7 +12,7 @@ const ActivityDashboard = () => {
   const { activityList, loadActivities } = activityStore;
 
   useEffect(() => {
-    if (activityList.size <= 1) loadActivities();
+    loadActivities();
   }, [activityList.size, loadActivities]);
 
   if (activityStore.isLoadingList) {
