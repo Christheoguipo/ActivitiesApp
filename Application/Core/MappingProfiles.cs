@@ -1,4 +1,5 @@
 ﻿using Application.Activities;
+using Application.Photos;
 using AutoMapper;
 using Domain;
 
@@ -16,6 +17,7 @@ namespace Application.Core
             .ForMember(d => d.Bio, o => o.MapFrom(s => s.AppUser.Bio))
             .ForMember(d => d.Username, o => o.MapFrom(s => s.AppUser.UserName));
             
+            CreateMap<PhotoDto, Photo>();
         }
     }
 }
