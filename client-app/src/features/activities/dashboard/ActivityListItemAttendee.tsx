@@ -13,7 +13,7 @@ const ActivityListItemAttendee = ({ attendees }: Props) => {
     <List horizontal>
       {attendees.map(attendee => (
         <Popup key={attendee.username} hoverable trigger={
-          <List.Item key={attendee.username} as={Link} to={`/profile/${attendee.username}`}>
+          <List.Item key={attendee.username} as={Link} to={`/profiles/${attendee.username}`}>
             <Image size="mini" src={attendee.image || "/assets/user.png"} circular />
           </List.Item>
         } >
