@@ -4,13 +4,13 @@ import { toast } from "react-toastify";
 import { router } from "../router/Router";
 import { store } from "../stores/store";
 import { User, UserFormValues } from "../models/user";
-import { Profile } from '../models/profile';
+import { IPhoto, Profile } from '../models/profile';
 
-const sleep = (delay: number) => {
-  return new Promise((resolve) => {
-    setTimeout(resolve, delay);
-  });
-};
+// const sleep = (delay: number) => {
+//   return new Promise((resolve) => {
+//     setTimeout(resolve, delay);
+//   });
+// };
 
 axios.defaults.baseURL = "http://localhost:5000/api";
 
@@ -21,7 +21,7 @@ axios.interceptors.request.use(config => {
 });
 
 axios.interceptors.response.use(async (response) => {
-  await sleep(1000);
+  // await sleep(1000);
   return response;
 }, (error: AxiosError) => {
 
@@ -87,7 +87,14 @@ const Account = {
 }
 
 const Profiles = {
-  get: (username: string) => requests.get<Profile>(`/profiles/${username}`)
+  get: (username: string) => requests.get<Profile>(`/profiles/${username}`),
+  uploadPhoto: (file: Blob) => {
+    const formData = new FormData();
+    formData.append('File', file);
+    return axios.post<IPhoto>('/photos', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    });
+  }
 }
 
 const agent = {
