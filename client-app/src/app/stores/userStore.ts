@@ -47,4 +47,9 @@ export default class UserStore {
     }
   }
 
+  setMainImage = (image: string) => {
+    if (this.user)
+      this.user.image = image;
+  }
+
 }
