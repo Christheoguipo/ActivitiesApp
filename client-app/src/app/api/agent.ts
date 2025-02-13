@@ -94,7 +94,8 @@ const Profiles = {
     return axios.post<IPhoto>('/photos', formData, {
       headers: { 'Content-Type': 'multipart/form-data' }
     });
-  }
+  },
+  setMainPhoto: (id: string) => requests.post(`/photos/${id}/setMain`, {})
 }
 
 const agent = {
