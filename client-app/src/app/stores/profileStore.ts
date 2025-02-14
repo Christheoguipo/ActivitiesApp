@@ -7,7 +7,9 @@ export default class ProfileStore {
   profile: Profile | null = null;
   isLoadingProfile: boolean = false;
   isUploading: boolean = false;
+  isDeleting: boolean = false;
   isSettingMainPhoto: boolean = false;
+
 
   constructor() {
     makeAutoObservable(this);
@@ -78,6 +80,24 @@ export default class ProfileStore {
     } finally {
       runInAction(() => {
         this.isSettingMainPhoto = false;
+      });
+    }
+  }
+
+  deletePhoto = async (photo: IPhoto) => {
+    this.isDeleting = true;
+    try {
+      await agent.Profiles.deletePhoto(photo.id);
+      runInAction(() => {
+        if (this.profile) {
+          this.profile.photos = this.profile.photos?.filter(p => p.id !== photo.id);
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    } finally {
+      runInAction(() => {
+        this.isDeleting = false;
       });
     }
   }
