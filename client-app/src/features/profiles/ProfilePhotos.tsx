@@ -11,7 +11,7 @@ interface Props {
 
 const ProfilePhotos = ({ profile }: Props) => {
 
-  const { profileStore: { isCurrentUser, uploadPhoto, isUploading, isSettingMainPhoto, setMainPhoto } } = useStore();
+  const { profileStore: { isCurrentUser, uploadPhoto, isUploading, isSettingMainPhoto, setMainPhoto, isDeleting, deletePhoto } } = useStore();
   const [isAddPhotoMode, setIsAddPhotoMode] = useState(false);
   const [target, setTarget] = useState('');
 
@@ -22,6 +22,11 @@ const ProfilePhotos = ({ profile }: Props) => {
   const handleSetTarget = (photo: IPhoto, e: SyntheticEvent<HTMLButtonElement>) => {
     setTarget(e.currentTarget.name);
     setMainPhoto(photo);
+  }
+
+  const handleDeletePhoto = (photo: IPhoto, e: SyntheticEvent<HTMLButtonElement>) => {
+    setTarget(e.currentTarget.name);
+    deletePhoto(photo);
   }
 
   return (
@@ -52,6 +57,12 @@ const ProfilePhotos = ({ profile }: Props) => {
                         name={photo.id}
                         loading={isSettingMainPhoto && target === photo.id}
                         onClick={(e) => handleSetTarget(photo, e)}
+                      />
+                      <Button basic color='red' icon='trash'
+                        disabled={photo.isMain}
+                        name={photo.id}
+                        loading={isDeleting && target === photo.id}
+                        onClick={(e) => handleDeletePhoto(photo, e)}
                       />
                     </Button.Group>
                   )}
