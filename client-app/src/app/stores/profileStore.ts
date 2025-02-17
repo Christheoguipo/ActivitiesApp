@@ -9,6 +9,7 @@ export default class ProfileStore {
   isUploading: boolean = false;
   isDeleting: boolean = false;
   isSettingMainPhoto: boolean = false;
+  isUpdatingProfile: boolean = false;
 
 
   constructor() {
@@ -99,6 +100,25 @@ export default class ProfileStore {
       runInAction(() => {
         this.isDeleting = false;
       });
+    }
+  }
+
+  editProfile = async (profile: Partial<Profile>) => {
+    this.isUpdatingProfile = true;
+    try {
+      await agent.Profiles.editProfile(profile);
+      if (this.profile) {
+        runInAction(() => {
+          this.profile = { ...this.profile, ...profile as Profile };
+          store.userStore.setDisplayName(profile.displayName!);
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      runInAction(() => {
+        this.isUpdatingProfile = false;
+      })
     }
   }
 }
