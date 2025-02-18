@@ -1,5 +1,6 @@
 ﻿using Application.Core;
 using Application.Interfaces;
+using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
@@ -10,7 +11,16 @@ namespace Application.Profiles
     {
         public class Command : IRequest<Result<Unit>>
         {
-            public Profile Profile { get; set; }
+            public string DisplayName { get; set; }
+            public string Bio { get; set; }
+        }
+
+        public class CommandValidator : AbstractValidator<Command>
+        {
+            public CommandValidator()
+            {
+                RuleFor(p => p.DisplayName).NotEmpty();
+            }
         }
 
         public class Handler : IRequestHandler<Command, Result<Unit>>
@@ -26,23 +36,13 @@ namespace Application.Profiles
 
             public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
             {
-                var profile = await _dbContext.Users
-                    .SingleOrDefaultAsync(u => u.UserName == _userAccessor.GetUsername());
+                var user = await _dbContext.Users
+                    .FirstOrDefaultAsync(u => u.UserName == _userAccessor.GetUsername());
 
-                if (profile == null)
-                {
-                    return Result<Unit>.Failure("User not found.");
-                }
+                user.Bio = request.Bio ?? user.Bio;
+                user.DisplayName = request.DisplayName ?? user.DisplayName;
 
-                if (request.Profile.DisplayName == null)
-                {
-                    return Result<Unit>.Failure("Display name should not be blank.");
-                }
-
-                profile.DisplayName = request.Profile.DisplayName;
-                profile.Bio = request.Profile.Bio;
-
-                _dbContext.Entry(profile).Property(p => p.DisplayName).IsModified = true;
+                _dbContext.Entry(user).State = EntityState.Modified;
 
                 var result = await _dbContext.SaveChangesAsync() > 0;
 
