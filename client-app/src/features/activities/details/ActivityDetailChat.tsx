@@ -1,6 +1,25 @@
+import { useEffect } from 'react';
 import { Button, Comment, FormTextArea, Segment, Form, Header } from "semantic-ui-react"
+import { useStore } from '../../../app/stores/store';
+import { Link } from 'react-router-dom';
 
-const ActivityDetailChat = () => {
+interface Props {
+  activitiyId: string;
+}
+
+const ActivityDetailChat = ({ activitiyId }: Props) => {
+
+  const { commentStore } = useStore();
+
+  useEffect(() => {
+    if (activitiyId)
+      commentStore.createHubConnection(activitiyId);
+
+    return () => {
+      commentStore.clearComments();
+    }
+  }, [commentStore, activitiyId])
+
   return (
     <Segment.Group>
       <Segment attached="top" inverted textAlign="center" color="teal" style={{ border: 'none' }}>
@@ -9,33 +28,18 @@ const ActivityDetailChat = () => {
 
       <Segment attached>
         <Comment.Group>
-          <Comment>
-            <Comment.Avatar src='https://react.semantic-ui.com/images/avatar/small/matt.jpg' />
-            <Comment.Content>
-              <Comment.Author as='a'>Matt</Comment.Author>
-              <Comment.Metadata>
-                <div>Today at 5:42PM</div>
-              </Comment.Metadata>
-              <Comment.Text>How artistic!</Comment.Text>
-              <Comment.Actions>
-                <Comment.Action>Reply</Comment.Action>
-              </Comment.Actions>
-            </Comment.Content>
-          </Comment>
-          <Comment>
-            <Comment.Avatar src='https://react.semantic-ui.com/images/avatar/small/joe.jpg' />
-            <Comment.Content>
-              <Comment.Author as='a'>Joe Henderson</Comment.Author>
-              <Comment.Metadata>
-                <div>5 days ago</div>
-              </Comment.Metadata>
-              <Comment.Text>Dude, this is awesome. Thanks so much</Comment.Text>
-              <Comment.Actions>
-                <Comment.Action>Reply</Comment.Action>
-              </Comment.Actions>
-            </Comment.Content>
-          </Comment>
-
+          {commentStore.comments.map((comment) => (
+            <Comment key={comment.id}>
+              <Comment.Avatar src={comment.image} />
+              <Comment.Content>
+                <Comment.Author as={Link} to={`/profiles/${comment.username}`} >{comment.displayName}</Comment.Author>
+                <Comment.Metadata>
+                  <div>{comment.createdAt}</div>
+                </Comment.Metadata>
+                <Comment.Text>{comment.body}</Comment.Text>
+              </Comment.Content>
+            </Comment>
+          ))}
           <Form reply>
             <FormTextArea />
             <Button content='Add Reply' labelPosition='left' icon='edit' primary />

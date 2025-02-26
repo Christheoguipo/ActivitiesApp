@@ -28,7 +28,7 @@ const ActivityDetails = () => {
 
           <ActivityDetailHeader activity={activity} />
           <ActivityDetailInfo activity={activity} />
-          <ActivityDetailChat />
+          <ActivityDetailChat activitiyId={activity.id} />
         </Grid.Column>
         <Grid.Column width={6}>
           <ActivityDetailSideBar activity={activity} />
