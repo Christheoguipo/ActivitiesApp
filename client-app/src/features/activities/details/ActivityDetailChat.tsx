@@ -1,7 +1,10 @@
 import { useEffect } from 'react';
-import { Button, Comment, FormTextArea, Segment, Form, Header } from "semantic-ui-react"
+import { Button, Comment, Segment, Header } from "semantic-ui-react"
 import { useStore } from '../../../app/stores/store';
 import { Link } from 'react-router-dom';
+import { Form, Formik } from 'formik';
+import MyTextArea from '../../../app/common/form/MyTextArea';
+import { observer } from 'mobx-react-lite';
 
 interface Props {
   activitiyId: string;
@@ -26,7 +29,7 @@ const ActivityDetailChat = ({ activitiyId }: Props) => {
         <Header>Chat about this event</Header>
       </Segment>
 
-      <Segment attached>
+      <Segment attached clearing>
         <Comment.Group>
           {commentStore.comments.map((comment) => (
             <Comment key={comment.id}>
@@ -40,14 +43,33 @@ const ActivityDetailChat = ({ activitiyId }: Props) => {
               </Comment.Content>
             </Comment>
           ))}
-          <Form reply>
-            <FormTextArea />
-            <Button content='Add Reply' labelPosition='left' icon='edit' primary />
-          </Form>
+
+          <Formik
+            onSubmit={(values, { resetForm }) => commentStore.addComment(values).then(() => resetForm())}
+            initialValues={{ body: '' }}
+          >
+            {({ isSubmitting, isValid }) => (
+              <Form className='form ui' >
+                <MyTextArea placeholder='Add comment' name='body' rows={2} />
+                <Button
+                  loading={isSubmitting}
+                  disabled={isSubmitting || !isValid}
+                  content='Add Reply'
+                  labelPosition='left'
+                  icon='edit'
+                  primary
+                  type='submit'
+                  floated='right'
+                />
+              </Form>
+            )}
+          </Formik>
+
+
         </Comment.Group>
       </Segment>
     </Segment.Group>
   )
 }
 
-export default ActivityDetailChat
+export default observer(ActivityDetailChat)
