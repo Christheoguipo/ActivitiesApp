@@ -1,10 +1,10 @@
 import { useEffect } from 'react';
-import { Button, Comment, Segment, Header } from "semantic-ui-react"
+import { Comment, Segment, Header, Loader } from "semantic-ui-react"
 import { useStore } from '../../../app/stores/store';
 import { Link } from 'react-router-dom';
-import { Form, Formik } from 'formik';
-import MyTextArea from '../../../app/common/form/MyTextArea';
+import { Field, FieldProps, Form, Formik } from 'formik';
 import { observer } from 'mobx-react-lite';
+import * as Yup from 'yup';
 
 interface Props {
   activitiyId: string;
@@ -39,7 +39,7 @@ const ActivityDetailChat = ({ activitiyId }: Props) => {
                 <Comment.Metadata>
                   <div>{comment.createdAt}</div>
                 </Comment.Metadata>
-                <Comment.Text>{comment.body}</Comment.Text>
+                <Comment.Text style={{ whiteSpace: 'pre-wrap' }}>{comment.body}</Comment.Text>
               </Comment.Content>
             </Comment>
           ))}
@@ -47,25 +47,38 @@ const ActivityDetailChat = ({ activitiyId }: Props) => {
           <Formik
             onSubmit={(values, { resetForm }) => commentStore.addComment(values).then(() => resetForm())}
             initialValues={{ body: '' }}
+            validationSchema={Yup.object({
+              body: Yup.string().required()
+            })}
           >
-            {({ isSubmitting, isValid }) => (
+            {({ isSubmitting, isValid, handleSubmit }) => (
               <Form className='form ui' >
-                <MyTextArea placeholder='Add comment' name='body' rows={2} />
-                <Button
-                  loading={isSubmitting}
-                  disabled={isSubmitting || !isValid}
-                  content='Add Reply'
-                  labelPosition='left'
-                  icon='edit'
-                  primary
-                  type='submit'
-                  floated='right'
-                />
+                <Field name='body' >
+                  {(props: FieldProps) => (
+                    <div style={{ position: 'relative' }}>
+                      <Loader active={isSubmitting} />
+                      <textarea
+                        placeholder='Enter you comment (Enter to submit, SHIFT + Enter to add new line)'
+                        {...props.field}
+                        rows={2}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' && e.shiftKey) {
+                            return;
+                          }
+                          if (e.key === 'Enter' && !e.shiftKey) {
+                            e.preventDefault();
+                            if (isValid)
+                              handleSubmit();
+                          }
+                        }}
+                      />
+
+                    </div>
+                  )}
+                </Field>
               </Form>
             )}
           </Formik>
-
-
         </Comment.Group>
       </Segment>
     </Segment.Group>
