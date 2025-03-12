@@ -10,6 +10,8 @@ namespace Application.Core
     {
         public MappingProfiles()
         {
+            string currentUsername = null;
+
             CreateMap<Activity, Activity>();
 
             CreateMap<Activity, ActivityDto>()
@@ -26,7 +28,8 @@ namespace Application.Core
             CreateMap<AppUser, Profiles.Profile>()
                 .ForMember(d => d.Image, o => o.MapFrom(u => u.Photos.FirstOrDefault(u => u.IsMain).Url))
                 .ForMember(d => d.FollowersCount, o => o.MapFrom(u => u.Followers.Count))
-                .ForMember(d => d.FollowingsCount, o => o.MapFrom(u => u.Followings.Count));
+                .ForMember(d => d.FollowingsCount, o => o.MapFrom(u => u.Followings.Count))
+                .ForMember(d => d.Following, o => o.MapFrom(u => u.Followers.Any(f => f.Observer.UserName == currentUsername)));
 
             CreateMap<Comment, CommentDto>()
                 .ForMember(d => d.DisplayName, o => o.MapFrom(c => c.Author.DisplayName))
