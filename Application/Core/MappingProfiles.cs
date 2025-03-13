@@ -21,7 +21,10 @@ namespace Application.Core
                 .ForMember(d => d.DisplayName, o => o.MapFrom(s => s.AppUser.DisplayName))
                 .ForMember(d => d.Bio, o => o.MapFrom(s => s.AppUser.Bio))
                 .ForMember(d => d.Username, o => o.MapFrom(s => s.AppUser.UserName))
-                .ForMember(d => d.Image, o => o.MapFrom(s => s.AppUser.Photos.FirstOrDefault(u => u.IsMain).Url));
+                .ForMember(d => d.Image, o => o.MapFrom(s => s.AppUser.Photos.FirstOrDefault(u => u.IsMain).Url))
+                .ForMember(d => d.FollowersCount, o => o.MapFrom(u => u.AppUser.Followers.Count))
+                .ForMember(d => d.FollowingsCount, o => o.MapFrom(u => u.AppUser.Followings.Count))
+                .ForMember(d => d.Following, o => o.MapFrom(u => u.AppUser.Followers.Any(f => f.Observer.UserName == currentUsername)));
 
             CreateMap<PhotoDto, Photo>();
 
