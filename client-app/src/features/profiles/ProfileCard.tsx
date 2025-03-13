@@ -24,7 +24,7 @@ const ProfileCard = ({ profile }: Props) => {
       </Card.Content>
       <Card.Content extra>
         <Icon name="user" />
-        no. of Followers placeholder
+        {profile.followersCount} followers
       </Card.Content>
     </Card>
   )
