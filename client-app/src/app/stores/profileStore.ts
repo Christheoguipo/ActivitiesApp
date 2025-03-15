@@ -6,9 +6,11 @@ import { store } from './store';
 export default class ProfileStore {
   profile: Profile | null = null;
   isLoadingProfile: boolean = false;
+  isButtonLoading: boolean = false;
   isUploading: boolean = false;
   isDeleting: boolean = false;
   isSettingMainPhoto: boolean = false;
+  followings: Profile[] = []
 
 
   constructor() {
@@ -116,6 +118,38 @@ export default class ProfileStore {
       }
     } catch (error) {
       console.log(error);
+    }
+  }
+
+  updateFollowing = async (username: string, following: boolean) => {
+    this.isButtonLoading = true;
+    try {
+      await agent.Profiles.updateFollowing(username);
+      store.activityStore.updateAttendeeFollowing(username);
+      runInAction(() => {
+        if (this.profile && this.profile.username !== store.userStore.user?.username) {
+          if (following)
+            this.profile.followersCount++;
+          else
+            this.profile.followersCount--;
+          this.profile.following = !this.profile.following;
+        }
+
+        this.followings.forEach((profile) => {
+          if (profile.username === username) {
+
+            if (profile.following)
+              profile.followersCount--;
+            else
+              profile.followersCount++;
+            profile.following = !profile.following;
+          }
+        });
+      });
+    } catch (error) {
+      console.log(error);
+    } finally {
+      runInAction(() => this.isButtonLoading = false);
     }
   }
 }
