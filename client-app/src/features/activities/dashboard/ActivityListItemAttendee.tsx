@@ -12,7 +12,7 @@ const ActivityListItemAttendee = ({ attendees }: Props) => {
 
   const borderedStyle = {
     borderColor: 'orange',
-    borderWidth: 2
+    borderWidth: 3
   }
 
   return (
