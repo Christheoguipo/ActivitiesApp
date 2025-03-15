@@ -205,4 +205,29 @@ export default class ActivityStore {
     this.selectedActivity = undefined;
   }
 
+  updateAttendeeFollowing = (username: string) => {
+    this.isLoadingButton = true;
+    try {
+      runInAction(() => {
+
+        this.activityList.forEach((activity) => {
+
+          activity.attendees?.forEach((attendee) => {
+            if (attendee.username === username) {
+              if (attendee.following)
+                attendee.followersCount--;
+              else
+                attendee.followersCount++;
+              attendee.following = !attendee.following;
+            }
+          })
+        });
+      });
+    } catch (error) {
+      console.log(error);
+    } finally {
+      runInAction(() => this.isLoadingButton = false);
+    }
+  }
+
 }
