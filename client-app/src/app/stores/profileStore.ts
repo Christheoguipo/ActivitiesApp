@@ -1,20 +1,32 @@
-import { makeAutoObservable, runInAction } from 'mobx';
+import { makeAutoObservable, reaction, runInAction } from 'mobx';
 import { IPhoto, Profile } from '../models/profile';
 import agent from '../api/agent';
 import { store } from './store';
 
 export default class ProfileStore {
   profile: Profile | null = null;
-  isLoadingProfile: boolean = false;
-  isButtonLoading: boolean = false;
-  isUploading: boolean = false;
-  isDeleting: boolean = false;
-  isSettingMainPhoto: boolean = false;
+  isLoadingProfile = false;
+  isButtonLoading = false;
+  isLoadingFollowings = false;
+  isUploading = false;
+  isDeleting = false;
+  isSettingMainPhoto = false;
   followings: Profile[] = []
-
+  activeTab = 0;
 
   constructor() {
     makeAutoObservable(this);
+
+    reaction(() => this.activeTab,
+      (activeTab) => {
+        if (activeTab === 3 || activeTab === 4) {
+          const predicate = activeTab === 3 ? 'followers' : 'following';
+          this.loadFollowings(predicate);
+        } else {
+          this.followings = []
+        }
+      }
+    )
   }
 
   get isCurrentUser() {
@@ -23,6 +35,10 @@ export default class ProfileStore {
     }
 
     return false;
+  }
+
+  setActiveTab = (index: number) => {
+    this.activeTab = index;
   }
 
   loadProfile = async (username: string) => {
@@ -150,6 +166,18 @@ export default class ProfileStore {
       console.log(error);
     } finally {
       runInAction(() => this.isButtonLoading = false);
+    }
+  }
+
+  loadFollowings = async (predicate: string) => {
+    this.isLoadingFollowings = true;
+    try {
+      const followings = await agent.Profiles.listFollowings(this.profile!.username, predicate);
+      runInAction(() => this.followings = followings);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      runInAction(() => this.isLoadingFollowings = false);
     }
   }
 }
