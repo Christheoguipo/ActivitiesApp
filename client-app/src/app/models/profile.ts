@@ -7,7 +7,7 @@ export interface IProfile {
   bio?: string;
   following: boolean;
   followersCount: number;
-  followingCount: number;
+  followingsCount: number;
   photos?: IPhoto[]
 }
 
@@ -30,6 +30,6 @@ export class Profile implements IProfile {
   bio?: string | undefined;
   following = false;
   followersCount = 0;
-  followingCount = 0;
+  followingsCount = 0;
   photos?: IPhoto[];
 }
