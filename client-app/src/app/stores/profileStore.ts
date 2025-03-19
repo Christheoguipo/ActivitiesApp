@@ -143,11 +143,21 @@ export default class ProfileStore {
       await agent.Profiles.updateFollowing(username);
       store.activityStore.updateAttendeeFollowing(username);
       runInAction(() => {
-        if (this.profile && this.profile.username !== store.userStore.user?.username) {
+        // When following/unfollowing while inside other user's profile
+        if (this.profile && this.profile.username !== store.userStore.user?.username && this.profile.username === username) {
           if (following)
             this.profile.followersCount++;
           else
             this.profile.followersCount--;
+          this.profile.following = !this.profile.following;
+        }
+
+        // When following/unfollowing while inside the current user's profile
+        if (this.profile && this.profile.username === store.userStore.user?.username) {
+          if (following)
+            this.profile.followingsCount++;
+          else
+            this.profile.followingsCount--;
           this.profile.following = !this.profile.following;
         }
 
