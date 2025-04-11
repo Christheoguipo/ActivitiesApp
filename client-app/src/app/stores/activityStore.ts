@@ -4,6 +4,7 @@ import agent from "../api/agent"
 import { format } from "date-fns";
 import { store } from "./store";
 import { Profile } from "../models/profile";
+import { Pagination } from '../models/pagination';
 
 export default class ActivityStore {
 
@@ -12,6 +13,7 @@ export default class ActivityStore {
   editMode: boolean = false;
   isLoadingList: boolean = false;
   isLoadingButton: boolean = false;
+  pagination: Pagination | null = null;
 
   constructor() {
     makeAutoObservable(this);
@@ -41,17 +43,21 @@ export default class ActivityStore {
     this.setIsLoadingList(true);
 
     try {
-      const activities = await agent.Activities.list();
+      const result = await agent.Activities.list();
 
-      activities.forEach((activity) => {
+      result.data.forEach((activity) => {
         this.setActivityList(activity);
       });
-
+      this.setPagination(result.pagination);
     } catch (error) {
       console.log(error);
     } finally {
       this.setIsLoadingList(false);
     }
+  }
+
+  setPagination = (pagination: Pagination) => {
+    this.pagination = pagination;
   }
 
   loadActivity = async (id: string) => {
