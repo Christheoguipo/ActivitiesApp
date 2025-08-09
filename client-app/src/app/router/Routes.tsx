@@ -23,7 +23,7 @@ export const routes: RouteObject[] = [
           { path: 'manage/:id', element: <ActivityForm key={'manage'} /> },
           { path: 'profiles/:username', element: <ProfilePage /> },
           { path: 'login', element: <LoginForm /> },
-          { path: 'errors', element: <TestErrors /> },
+          // { path: 'errors', element: <TestErrors /> },
         ]
       },
       { path: 'not-found', element: <NotFound /> },
