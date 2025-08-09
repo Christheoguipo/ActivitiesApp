@@ -7,7 +7,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import "./app/layout/styles.css";
 import { store, StoreContext } from "./app/stores/store";
 import { RouterProvider } from "react-router-dom";
-import { router } from "./app/router/Router";
+import { router } from "./app/router/Routes";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
