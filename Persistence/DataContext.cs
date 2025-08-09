@@ -54,7 +54,7 @@ namespace Persistence
 
                 u.HasOne(uf => uf.Target)
                 .WithMany(a => a.Followers)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.NoAction);
             });
         }
     }
