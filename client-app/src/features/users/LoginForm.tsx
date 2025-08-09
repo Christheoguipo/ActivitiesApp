@@ -10,7 +10,7 @@ const LoginForm = () => {
 
   return (
     <Formik
-      initialValues={{ email: '', password: '', error: null }}
+      initialValues={{ email: "tryme@email.com", password: "Pa$$w0rd", error: null }}
       onSubmit={(values, { setErrors }) => userStore.login(values).catch(() => setErrors({ error: 'Invalid Email or Password.' }))} >
       {({ handleSubmit, isSubmitting, errors }) => (
         <Form className="ui form" onSubmit={handleSubmit} autoComplete="off" >
