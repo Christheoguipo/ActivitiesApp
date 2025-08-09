@@ -35,6 +35,11 @@ axios.interceptors.response.use(async (response) => {
 
   const { data, status, config } = error.response as AxiosResponse;
 
+  const isLoginRequest = config.url?.includes('login');
+
+  if (isLoginRequest)
+    return;
+
   switch (status) {
     case 400:
       if (config.method === 'get' && data.errors && Object.prototype.hasOwnProperty.call(data.errors, 'id')) {
