@@ -47,15 +47,3 @@ body {
 }
 
 /*end home page styles*/
-
-:root {
-  --menu-h: 54px;
-}
-
-.menu-progress {
-  position: fixed;
-  top: var(--menu-h);
-  left: 0;
-  right: 0;
-  z-index: 100;
-}
