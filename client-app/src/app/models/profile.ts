@@ -33,3 +33,10 @@ export class Profile implements IProfile {
   followingsCount = 0;
   photos?: IPhoto[];
 }
+
+export interface UserActivity {
+  id: string;
+  title: string;
+  category: string;
+  date: Date;
+}
